@@ -45,7 +45,7 @@ internal val towerOfHanoiContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.RecursionTreeVisualizer,
     applications = listOf(
         ApplicationCard("book", 0xFF10B981, "Teaching Recursion", "It shows a problem defined purely in terms of two smaller instances of itself."),
         ApplicationCard("history", 0xFF3B82F6, "Backup Rotation", "The 'Tower of Hanoi' backup scheme rotates tape/disk sets on a Hanoi-like schedule."),

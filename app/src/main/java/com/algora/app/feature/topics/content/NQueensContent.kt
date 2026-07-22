@@ -57,7 +57,7 @@ internal val nQueensContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.RecursionTreeVisualizer,
     applications = listOf(
         ApplicationCard("target", 0xFF10B981, "Constraint Satisfaction", "It models any 'assign values without violating constraints' problem — the CSP template."),
         ApplicationCard("chip", 0xFF3B82F6, "Scheduling & Layout", "Backtracking with pruning drives timetabling, register allocation, and VLSI placement."),

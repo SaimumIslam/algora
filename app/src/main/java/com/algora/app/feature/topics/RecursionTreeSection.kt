@@ -42,7 +42,7 @@ import com.algora.app.core.ui.theme.SimColors
 private sealed interface RecState {
     data object Active : RecState        // top of the call stack
     data object Waiting : RecState       // on the stack, waiting for a child to return
-    data class Returned(val value: Long) : RecState
+    data object Returned : RecState      // popped
 }
 
 private class RecNode(val id: Int, val parent: Int?, val label: String, val depth: Int)
@@ -56,7 +56,7 @@ private class Tracer {
     val nodes = mutableListOf<RecNode>()
     val frames = mutableListOf<RecFrame>()
     private val stack = ArrayDeque<Int>()
-    private val returned = HashMap<Int, Long>()
+    private val returned = mutableSetOf<Int>()
 
     fun call(parent: Int?, label: String): Int {
         val depth = parent?.let { nodes[it].depth + 1 } ?: 0
@@ -67,17 +67,18 @@ private class Tracer {
         return id
     }
 
-    fun ret(id: Int, value: Long) {
-        returned[id] = value
+    // result is any short string ("= 120", "✓ solved", "move A→C") — recursions needn't be numeric.
+    fun ret(id: Int, result: String) {
+        returned.add(id)
         stack.removeLast()
-        frame("return ${nodes[id].label} = $value")
+        frame("return ${nodes[id].label} $result")
     }
 
     private fun frame(status: String) {
         val top = stack.lastOrNull()
         val map = nodes.associate { n ->
             n.id to when {
-                returned.containsKey(n.id) -> RecState.Returned(returned.getValue(n.id))
+                n.id in returned -> RecState.Returned
                 n.id == top -> RecState.Active
                 stack.contains(n.id) -> RecState.Waiting
                 else -> RecState.Waiting
@@ -99,7 +100,7 @@ private fun factorialTrace(n: Int): RecTrace {
     fun fact(parent: Int?, k: Int): Long {
         val id = t.call(parent, "fact($k)")
         val result = if (k <= 1) 1L else k * fact(id, k - 1)
-        t.ret(id, result)
+        t.ret(id, "= $result")
         return result
     }
     fact(null, n)
@@ -111,16 +112,63 @@ private fun fibonacciTrace(n: Int): RecTrace {
     fun fib(parent: Int?, k: Int): Long {
         val id = t.call(parent, "fib($k)")
         val result = if (k < 2) k.toLong() else fib(id, k - 1) + fib(id, k - 2)
-        t.ret(id, result)
+        t.ret(id, "= $result")
         return result
     }
     fib(null, n)
     return RecTrace(t.nodes, t.frames)
 }
 
+// Tower of Hanoi: hanoi(n) makes two hanoi(n-1) calls — a small binary tree (2^n - 1 nodes).
+private fun hanoiTrace(disks: Int): RecTrace {
+    val t = Tracer()
+    fun hanoi(parent: Int?, n: Int, from: Char, to: Char, via: Char) {
+        val id = t.call(parent, "h($n)")
+        if (n == 1) {
+            t.ret(id, "move $from→$to")
+        } else {
+            hanoi(id, n - 1, from, via, to)
+            hanoi(id, n - 1, via, to, from)
+            t.ret(id, "move $from→$to + done")
+        }
+    }
+    hanoi(null, disks, 'A', 'C', 'B')
+    return RecTrace(t.nodes, t.frames)
+}
+
+// N-Queens: place one queen per row, backtracking. Capped small so the search tree stays legible.
+private fun nQueensTrace(boardN: Int): RecTrace {
+    val t = Tracer()
+    val cols = IntArray(boardN) { -1 }
+    fun safe(row: Int, col: Int): Boolean {
+        for (r in 0 until row) {
+            val c = cols[r]
+            if (c == col || kotlin.math.abs(c - col) == row - r) return false
+        }
+        return true
+    }
+    fun solve(parent: Int?, row: Int): Boolean {
+        val id = t.call(parent, "r$row")
+        if (row == boardN) { t.ret(id, "✓ solved"); return true }
+        for (col in 0 until boardN) {
+            if (safe(row, col)) {
+                cols[row] = col
+                if (solve(id, row + 1)) { t.ret(id, "✓ col $col"); cols[row] = -1; return true }
+                cols[row] = -1
+            }
+        }
+        t.ret(id, "✗ backtrack")
+        return false
+    }
+    solve(null, 0)
+    return RecTrace(t.nodes, t.frames)
+}
+
 private val recursionConfigs = mapOf(
     "factorial" to RecursionConfig(1f..8f, 5, "n") { factorialTrace(it) },
     "fibonacci_recursive" to RecursionConfig(1f..6f, 4, "n") { fibonacciTrace(it) },
+    "tower_of_hanoi" to RecursionConfig(1f..4f, 3, "disks") { hanoiTrace(it) },
+    "n_queens" to RecursionConfig(4f..6f, 4, "board size") { nQueensTrace(it) },
 )
 
 private fun recursionConfigFor(topicId: String): RecursionConfig =
@@ -257,7 +305,7 @@ private fun RecursionCanvas(nodes: List<RecNode>, stateById: Map<Int, RecState>)
                 val color = when (stateById[node.id]) {
                     RecState.Active -> ActiveColor
                     RecState.Waiting -> WaitingColor
-                    is RecState.Returned -> ReturnedColor
+                    RecState.Returned -> ReturnedColor
                     else -> PendingColor
                 }
                 drawCircle(color, radius = radius, center = center)
