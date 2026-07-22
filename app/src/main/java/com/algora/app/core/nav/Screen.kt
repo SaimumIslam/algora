@@ -52,6 +52,10 @@ object FlashcardsRoute {
     const val ROUTE = "flashcards"
 }
 
+object ReviewRoute {
+    const val ROUTE = "review"
+}
+
 object ProgressRoute {
     const val ROUTE = "progress"
 }

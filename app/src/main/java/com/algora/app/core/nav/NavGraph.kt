@@ -19,6 +19,7 @@ import com.algora.app.feature.machinelearning.MachineLearningScreen
 import com.algora.app.feature.nlp.NlpScreen
 import com.algora.app.feature.progress.ProgressScreen
 import com.algora.app.feature.reinforcementlearning.ReinforcementLearningScreen
+import com.algora.app.feature.review.ReviewScreen
 import com.algora.app.feature.simulations.SimulationsScreen
 import com.algora.app.feature.topics.TopicDetailScreen
 
@@ -62,6 +63,10 @@ fun NavGraph(
 
         composable(FlashcardsRoute.ROUTE) {
             FlashcardScreen(onBack = { navController.popBackStack() })
+        }
+
+        composable(ReviewRoute.ROUTE) {
+            ReviewScreen(onBack = { navController.popBackStack() })
         }
 
         // Progress dashboard — mock's fixed Progress nav destination (isProgress block).

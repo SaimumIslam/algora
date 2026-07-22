@@ -47,7 +47,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.horizontalScroll
+import com.algora.app.core.data.PrerequisiteGraph
 import com.algora.app.core.data.TopicRegistry
+import com.algora.app.core.ui.theme.SimColors
 import com.algora.app.core.data.model.ApplicationCard
 import com.algora.app.core.data.model.CrossLink
 import com.algora.app.core.data.model.FormulaEntry
@@ -180,6 +183,7 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
             item { SectionTitle("Real-World Applications") }
             item { ApplicationsSection(content.applications) }
             item { TakeawaysSection(content.takeaways) }
+            item { PrerequisitesSection(topicId, onTopicClick) }
             if (content.crossLinks.isNotEmpty()) {
                 item { RelatedTopicsSection(content.crossLinks, onTopicClick) }
             }
@@ -323,6 +327,59 @@ private fun SimulationComingSoonCard() {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
             )
+        }
+    }
+}
+
+// Learning-path context (Phase 7): what to learn before this topic, and what it unlocks. Both are
+// tappable chips that navigate. Renders nothing if the topic isn't in the curated PrerequisiteGraph.
+@Composable
+private fun PrerequisitesSection(topicId: String, onTopicClick: (String) -> Unit) {
+    val prereqs = PrerequisiteGraph.prereqsOf(topicId).mapNotNull { TopicRegistry.find(it) }
+    val unlocks = PrerequisiteGraph.unlockedBy(topicId).mapNotNull { TopicRegistry.find(it) }
+    if (prereqs.isEmpty() && unlocks.isEmpty()) return
+
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)) {
+        Text("Learning Path", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 12.dp))
+        if (prereqs.isNotEmpty()) {
+            PathRow(label = "Learn first", topics = prereqs, accent = MaterialTheme.colorScheme.primary, onTopicClick = onTopicClick)
+        }
+        if (unlocks.isNotEmpty()) {
+            PathRow(label = "Unlocks", topics = unlocks, accent = SimColors.Green, onTopicClick = onTopicClick, topPad = if (prereqs.isNotEmpty()) 10.dp else 0.dp)
+        }
+    }
+}
+
+@Composable
+private fun PathRow(
+    label: String,
+    topics: List<Topic>,
+    accent: Color,
+    onTopicClick: (String) -> Unit,
+    topPad: androidx.compose.ui.unit.Dp = 0.dp,
+) {
+    Column(modifier = Modifier.padding(top = topPad)) {
+        Text(label, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(bottom = 6.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            topics.forEach { t ->
+                Surface(
+                    modifier = Modifier.clickable { onTopicClick(t.id) },
+                    shape = RoundedCornerShape(10.dp),
+                    color = accent.copy(alpha = 0.10f),
+                    border = BorderStroke(1.dp, accent.copy(alpha = 0.35f)),
+                ) {
+                    Text(
+                        t.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.Medium,
+                        color = accent,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    )
+                }
+            }
         }
     }
 }

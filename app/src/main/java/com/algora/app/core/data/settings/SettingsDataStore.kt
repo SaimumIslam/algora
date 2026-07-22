@@ -20,4 +20,5 @@ object SettingsKeys {
     val LAST_OPENED = stringPreferencesKey("last_opened_topic")
     val STREAK_COUNT = intPreferencesKey("streak_count")
     val STREAK_LAST_DAY = longPreferencesKey("streak_last_epoch_day")
+    val SRS = stringSetPreferencesKey("srs_state")
 }

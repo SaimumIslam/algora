@@ -46,6 +46,24 @@ class SettingsRepository(private val dataStore: DataStore<Preferences>) {
     val streak: Flow<Int> =
         dataStore.data.map { prefs -> prefs[SettingsKeys.STREAK_COUNT] ?: 0 }
 
+    val srs: Flow<Map<String, SrsCard>> =
+        dataStore.data.map { prefs ->
+            (prefs[SettingsKeys.SRS] ?: emptySet()).mapNotNull { parseSrs(it) }.toMap()
+        }
+
+    // Records an SM-2 review of one card and reschedules it.
+    suspend fun reviewCard(cardKey: String, quality: Int) {
+        val today = System.currentTimeMillis() / 86_400_000L
+        dataStore.edit { prefs ->
+            val set = (prefs[SettingsKeys.SRS] ?: emptySet()).toMutableSet()
+            val existingEntry = set.firstOrNull { it.substringBefore('|') == cardKey }
+            val prev = existingEntry?.let { parseSrs(it)?.second }
+            existingEntry?.let { set.remove(it) }
+            set.add(sm2(prev, quality, today).serialize(cardKey))
+            prefs[SettingsKeys.SRS] = set
+        }
+    }
+
     // Consecutive-day streak: same day → no change, yesterday → +1, any gap → reset to 1.
     suspend fun recordActivityToday() {
         val today = System.currentTimeMillis() / 86_400_000L

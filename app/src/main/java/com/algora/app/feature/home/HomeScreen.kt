@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material.icons.filled.LightMode
 import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Style
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ import com.algora.app.core.data.settings.ThemeMode
 import com.algora.app.core.data.settings.settingsDataStore
 import com.algora.app.core.nav.AppMode
 import com.algora.app.core.nav.FlashcardsRoute
+import com.algora.app.core.nav.ReviewRoute
 import com.algora.app.core.nav.Screen
 import com.algora.app.core.ui.components.resolveIcon
 import com.algora.app.core.ui.theme.SpaceGrotesk
@@ -289,6 +291,27 @@ fun HomeScreen(
                 Column(modifier = Modifier.weight(1f)) {
                     Text("Review Flashcards", style = MaterialTheme.typography.titleMedium)
                     Text("Auto-built from every topic's key takeaways", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+                Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            }
+        }
+
+        // Spaced-repetition review entry (Phase 7 SM-2 scheduler)
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 12.dp)
+                .clickable { onNavigate(ReviewRoute.ROUTE) },
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.10f),
+            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)),
+        ) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                Icon(Icons.Filled.Schedule, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                Spacer(modifier = Modifier.size(13.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    Text("Spaced Repetition", style = MaterialTheme.typography.titleMedium)
+                    Text("Review due cards on an SM-2 schedule", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 Icon(Icons.Filled.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             }
