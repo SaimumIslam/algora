@@ -179,6 +179,8 @@ object TopicContentProvider {
         "sliding_window_pattern" to slidingWindowPatternContent,
         "two_pointer_pattern" to twoPointerPatternContent,
         "fast_slow_pointers" to fastSlowPointersContent,
+        "merge_intervals_pattern" to mergeIntervalsPatternContent,
+        "top_k_pattern" to topKPatternContent,
     )
 
     fun get(topicId: String): TopicContent? = byId[topicId]
