@@ -17,7 +17,7 @@ Each phase gets planned in detail in its own session: `/clear`, load this file +
 | 0 | Foundation & App Shell | Done |
 | 1 | Vertical Slice | Done |
 | 2 | Topic Browser & Content Scale-out | Browser shell done — bulk content authoring continues |
-| 3 | Interactive Simulation Library | Data-structure sims + gate solver (as Perceptron sim) done — recursion/DP/slider-explorer deferred; ClassifierPlayground generalization planned (see phase-3 doc) |
+| 3 | Interactive Simulation Library | Data-structure sims + gate solver + reusable ClassifierPlayground (Perceptron/Logistic/SVM) done — recursion/DP/slider-explorer deferred |
 | 4 | Algorithm Analysis Module | Done — all 17 Analysis tool ids built (11 distinct tools; see phase-4 doc) |
 | 5 | AI Mode | Mode switch + AI nav + full ML/DL/NLP/RL taxonomy done; 2 flagship topics (Linear Regression, Perceptron) with sims — remaining AI content deferred |
 | 6 | Interview Prep Module | Timed quiz mode + 2 quizzes (pattern/company-tagged, cross-linked) + 3 pattern guides done — remaining sets/behavioral deferred |
