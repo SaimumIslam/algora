@@ -46,6 +46,7 @@ private fun simLabel(type: SimulationType): String = when (type) {
     SimulationType.GraphVisualizer -> "Graph builder · BFS/DFS"
     SimulationType.RegressionExplorer -> "Regression explorer"
     SimulationType.PerceptronVisualizer -> "Perceptron playground"
+    SimulationType.ClassifierPlayground -> "Classifier playground"
     SimulationType.NotYetAvailable -> "Interactive lab"
 }
 

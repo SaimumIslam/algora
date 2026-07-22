@@ -1,6 +1,6 @@
 # Phase 3 — Interactive Simulation Library
 
-Status: Data-structure sims done — recursion tree, DP grid, generic slider-explorer, gate solver deferred
+Status: Data-structure sims done; gate solver shipped (as Perceptron sim, Phase 5) — recursion tree, DP grid, generic slider-explorer still deferred
 Depends on: Phase 2
 
 ## Goal
@@ -48,7 +48,62 @@ and status/counters update correctly, ending at "Complete").
 ## Deferred to a later session
 Recursion-tree/call-stack player (needs full playback transport — reset/step-back/play/pause/
 step-forward/speed-slider — richer than anything currently built), DP tabulation grid (needs a
-concrete DP problem chosen to visualize), the generic slider-driven parameter explorer, and the
-AND/OR/XOR gate solver. None of these have a current DSA topic to attach to (the two AI-mode ones
-belong with Phase 5); build them once their target topics exist or their design is worked out from
-scratch, since the mock provides no reference for any of the four.
+concrete DP problem chosen to visualize), and the generic slider-driven parameter explorer. None
+of these have a current DSA topic to attach to; build them once their target topics exist or their
+design is worked out from scratch, since the mock provides no reference.
+
+## Gate solver — status correction (this note supersedes the deferral above)
+
+The **AND/OR/XOR gate solver is built and shipped.** Phase 5 implemented it as
+`PerceptronSimulationSection.kt` — its own header reads *"the classifier-gate solver from the Phase
+3 scope, applied to The Perceptron."* It has the full gate selector, w₁/w₂/bias sliders,
+decision-boundary canvas, truth table, and pass/fail detection (`correct/4` + XOR-not-separable
+message). Wired as `SimulationType.PerceptronVisualizer` → attached to the `perceptron` topic
+(`PerceptronContent.kt`). On-device verified in Phase 5.
+
+What's **not** done is the Phase 3 *intent*: a **reusable** widget (its own `SimulationType`)
+attachable to multiple topics. It's currently perceptron-specific, and ~150 topics still sit on
+`SimulationType.NotYetAvailable`. Plan below generalizes it.
+
+## Generalization plan — reusable ClassifierPlayground
+
+Goal: extract the gate solver into a config-driven `ClassifierPlaygroundSection`, then reuse it for
+other linear-classifier topics. Perceptron's current on-screen view must stay byte-identical (it's
+already verified — don't regress it).
+
+### Step 0 — Extract the core
+- Pull the gate/weights/bias/canvas/truth-table logic out of `PerceptronSimulationSection` into a
+  new `feature/topics/ClassifierPlaygroundSection.kt`.
+- Config = data class: dataset (list of points + target labels), classifier fn (params → predicted
+  label), slider specs (label + range), axis ranges, success message, optional teaching note.
+- Rewrite `PerceptronSimulationSection()` as a thin wrapper that calls `ClassifierPlaygroundSection`
+  with the AND/OR/XOR gate config. Zero visual change to the perceptron screen.
+- Reuse the existing `Surface`(18dp radius, `outline` border) chrome + `SimColors` palette already
+  in that file.
+
+### Step 1 — New SimulationType + exhaustive wiring
+- Add `data object ClassifierPlayground : SimulationType` to the sealed interface (`TopicContent.kt`).
+- `TopicDetailScreen.kt`'s `when` is exhaustive → compiler forces the new branch.
+- Add the label to `SimulationsScreen.kt`'s map (e.g. "Classifier playground").
+
+### Step 2 — Config resolution (the one architectural choice)
+`SimulationType` entries are param-free `data object`s, so the type can't carry per-topic config.
+Resolve config by **topicId**, mirroring `AnalysisToolRegistry`'s id→composable pattern: a
+`classifierConfigFor(topicId): ClassifierConfig` map in the section file. Keeps `SimulationType`
+param-free and consistent with how every other sim resolves (no args). (Alternative — make it
+`data class ClassifierPlayground(val configId: String)` — is rejected: it breaks the param-free
+convention and the `data object` equality the `when` relies on.)
+
+### Step 3 — Configs + attach to reuse targets
+- **Logistic Regression** (`logistic_regression`): two gaussian blobs, sigmoid boundary, weight/bias
+  sliders; success = accuracy over a threshold.
+- **SVM** (`svm`): two blobs, linear boundary + margin lines; w/b sliders; surface the margin width.
+- **Perceptron** (`perceptron`): existing gate config, unchanged.
+- Flip these topics' `simulation =` from `NotYetAvailable` to `ClassifierPlayground`.
+- **KNN / Decision Trees are a poor fit** (non-linear / non-parametric — no single tunable straight
+  boundary). Skip them for this widget; they'd need a separate sim. Don't force them in.
+
+### Step 4 — Verify
+- `./gradlew assembleDebug`.
+- Emulator: perceptron screen pixel-unchanged (regression check); logistic_regression + svm render
+  their blobs with a tunable decision boundary and live accuracy/margin readout.

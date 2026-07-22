@@ -46,7 +46,7 @@ internal val svmContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.ClassifierPlayground,
     applications = listOf(
         ApplicationCard("image", 0xFF818CF8, "Image Classification", "Strong on small-to-medium, high-dimensional datasets before deep nets took over."),
         ApplicationCard("flask", 0xFF60A5FA, "Bioinformatics", "Gene-expression and protein classification, where features vastly outnumber samples."),

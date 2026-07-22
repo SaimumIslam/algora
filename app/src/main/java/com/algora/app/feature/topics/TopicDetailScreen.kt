@@ -170,6 +170,7 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
                         SimulationType.GraphVisualizer -> GraphSimulationSection()
                         SimulationType.RegressionExplorer -> RegressionSimulationSection()
                         SimulationType.PerceptronVisualizer -> PerceptronSimulationSection()
+                        SimulationType.ClassifierPlayground -> ClassifierPlaygroundSection(classifierConfigFor(topicId))
                         SimulationType.NotYetAvailable -> SimulationComingSoonCard()
                     }
                 }

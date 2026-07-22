@@ -46,7 +46,7 @@ internal val logisticRegressionContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.ClassifierPlayground,
     applications = listOf(
         ApplicationCard("finance", 0xFF818CF8, "Credit & Risk Scoring", "Estimating default probability from applicant features is a textbook logistic-regression task."),
         ApplicationCard("flask", 0xFF60A5FA, "Medical Diagnosis", "Predicting disease presence from measurements, with interpretable odds ratios."),

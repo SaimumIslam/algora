@@ -67,5 +67,6 @@ sealed interface SimulationType {
     data object GraphVisualizer : SimulationType
     data object RegressionExplorer : SimulationType
     data object PerceptronVisualizer : SimulationType
+    data object ClassifierPlayground : SimulationType
     data object NotYetAvailable : SimulationType
 }
