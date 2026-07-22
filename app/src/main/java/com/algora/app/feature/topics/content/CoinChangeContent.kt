@@ -49,7 +49,7 @@ internal val coinChangeContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.DpGridVisualizer,
     applications = listOf(
         ApplicationCard("finance", 0xFF10B981, "Cash & Change Machines", "Vending machines and registers dispense the fewest coins/notes for change."),
         ApplicationCard("chart", 0xFF3B82F6, "Making-Change Counting", "The ways-variant counts how many combinations reach a total — a classic combinatorics DP."),

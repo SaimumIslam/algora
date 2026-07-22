@@ -49,7 +49,7 @@ internal val knapsack01Content = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.DpGridVisualizer,
     applications = listOf(
         ApplicationCard("finance", 0xFF10B981, "Budget Selection", "Pick the most valuable indivisible investments or purchases under a fixed budget."),
         ApplicationCard("chip", 0xFF3B82F6, "Resource Packing", "Fit whole jobs, files, or containers into fixed capacity to maximize value."),

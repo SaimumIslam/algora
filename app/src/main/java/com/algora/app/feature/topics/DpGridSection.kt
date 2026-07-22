@@ -163,6 +163,95 @@ private fun lcsFrames(): List<DpFrame> {
     return bld.frames
 }
 
+private val coinChangeCoins = intArrayOf(1, 3, 4)
+private const val COIN_CHANGE_AMOUNT = 6
+private const val INF = Int.MAX_VALUE / 2
+
+private fun coinFmt(x: Int): String = if (x >= INF) "∞" else x.toString()
+
+// dp[i][a] = fewest coins for amount a using the first i denominations (unbounded).
+private fun coinChangeFrames(): List<DpFrame> {
+    val coins = coinChangeCoins
+    val amount = COIN_CHANGE_AMOUNT
+    val rows = coins.size + 1
+    val cols = amount + 1
+    val bld = DpBuilder(rows, cols)
+    val dp = Array(rows) { IntArray(cols) { INF } }
+    for (i in 0 until rows) {
+        for (a in 0 until cols) {
+            val status: String
+            dp[i][a] = when {
+                a == 0 -> { status = "dp[$i][0] = 0  (amount 0 needs no coins)"; 0 }
+                i == 0 -> { status = "dp[0][$a] = ∞  (no coins available)"; INF }
+                else -> {
+                    val skip = dp[i - 1][a]
+                    val coin = coins[i - 1]
+                    val use = if (coin <= a && dp[i][a - coin] < INF) dp[i][a - coin] + 1 else INF
+                    val v = minOf(skip, use)
+                    status = "coin ${coins[i - 1]}: min(skip ${coinFmt(skip)}, use ${coinFmt(use)}) = ${coinFmt(v)}"
+                    v
+                }
+            }
+            bld.fill(i, a, coinFmt(dp[i][a]), status)
+        }
+    }
+    if (dp[rows - 1][cols - 1] < INF) {
+        var i = rows - 1
+        var a = cols - 1
+        val path = mutableListOf(bld.key(i, a))
+        while (a > 0 && i > 0) {
+            if (dp[i][a] == dp[i - 1][a]) i-- else a -= coins[i - 1]
+            path.add(bld.key(i, a))
+        }
+        bld.trace(path.reversed()) { "Traceback — coins used. Minimum = ${dp[rows - 1][cols - 1]}." }
+    }
+    return bld.frames
+}
+
+private val knapWeights = intArrayOf(1, 2, 3)
+private val knapValues = intArrayOf(6, 10, 12)
+private const val KNAP_CAPACITY = 5
+
+// dp[i][w] = best value from the first i items within capacity w.
+private fun knapsackFrames(): List<DpFrame> {
+    val rows = knapWeights.size + 1
+    val cols = KNAP_CAPACITY + 1
+    val bld = DpBuilder(rows, cols)
+    val dp = Array(rows) { IntArray(cols) }
+    for (i in 0 until rows) {
+        for (w in 0 until cols) {
+            val status: String
+            dp[i][w] = when {
+                i == 0 || w == 0 -> { status = "dp[$i][$w] = 0  (no items or no capacity)"; 0 }
+                knapWeights[i - 1] <= w -> {
+                    val skip = dp[i - 1][w]
+                    val take = dp[i - 1][w - knapWeights[i - 1]] + knapValues[i - 1]
+                    val v = maxOf(skip, take)
+                    status = "item $i (wt ${knapWeights[i - 1]}, val ${knapValues[i - 1]}): max(skip $skip, take $take) = $v"
+                    v
+                }
+                else -> { status = "item $i too heavy → carry dp[${i - 1}][$w] = ${dp[i - 1][w]}"; dp[i - 1][w] }
+            }
+            bld.fill(i, w, dp[i][w].toString(), status)
+        }
+    }
+    var i = rows - 1
+    var w = cols - 1
+    val path = mutableListOf(bld.key(i, w))
+    while (i > 0 && w >= 0) {
+        if (dp[i][w] == dp[i - 1][w]) {
+            i--
+        } else {
+            w -= knapWeights[i - 1]
+            i--
+        }
+        if (w < 0) break
+        path.add(bld.key(i, w))
+    }
+    bld.trace(path.reversed()) { "Traceback — items chosen. Max value = ${dp[rows - 1][cols - 1]}." }
+    return bld.frames
+}
+
 private val dpConfigs = mapOf(
     "fibonacci_dp" to DpConfig(
         rows = 1, cols = 10,
@@ -185,6 +274,22 @@ private val dpConfigs = mapOf(
         corner = "",
         intro = "Longest common subsequence of \"abcbd\" and \"acbd\". On a match the diagonal grows; otherwise carry the best neighbour. Traceback recovers the subsequence.",
         build = ::lcsFrames,
+    ),
+    "coin_change" to DpConfig(
+        rows = coinChangeCoins.size + 1, cols = COIN_CHANGE_AMOUNT + 1,
+        rowHeader = { if (it == 0) "ε" else coinChangeCoins[it - 1].toString() },
+        colHeader = { it.toString() },
+        corner = "¢",
+        intro = "Fewest coins to make each amount, using denominations {1, 3, 4}. Each row adds a coin type; ∞ means unreachable. Traceback shows which coins make the target.",
+        build = ::coinChangeFrames,
+    ),
+    "knapsack_01" to DpConfig(
+        rows = knapWeights.size + 1, cols = KNAP_CAPACITY + 1,
+        rowHeader = { if (it == 0) "ε" else knapWeights[it - 1].toString() },
+        colHeader = { it.toString() },
+        corner = "wt",
+        intro = "0/1 knapsack — items (wt, val) = (1,6), (2,10), (3,12), capacity 5. Each cell is the best value achievable; the traceback marks the items chosen.",
+        build = ::knapsackFrames,
     ),
 )
 
