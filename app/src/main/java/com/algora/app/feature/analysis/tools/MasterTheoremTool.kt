@@ -38,10 +38,15 @@ private val presets = listOf(
     Preset("Naive matrix mult", 8, 2, 2),
 )
 
-private fun expText(exp: Double): String {
+// Polynomial term for an exponent: n^0 → "1", n^1 → "n", else "n^k".
+private fun poly(exp: Double): String {
     val rounded = Math.round(exp).toDouble()
     val label = if (abs(exp - rounded) < 1e-9) rounded.toInt().toString() else String.format("%.2f", exp)
-    return "n^$label"
+    return when (label) {
+        "0" -> "1"
+        "1" -> "n"
+        else -> "n^$label"
+    }
 }
 
 @Composable
@@ -52,13 +57,16 @@ fun MasterTheoremTool() {
 
     val logBA = ln(a.toDouble()) / ln(b.toDouble())
     val (caseNum, caseDesc, result) = when {
-        d < logBA - 1e-9 -> Triple(1, "d < log_b(a) — the leaves dominate.", "Θ(${expText(logBA)})")
-        d > logBA + 1e-9 -> Triple(3, "d > log_b(a) — the root work dominates.", "Θ(n^$d)")
-        else -> Triple(
-            2,
-            "d = log_b(a) — work is even across levels.",
-            if (d == 0) "Θ(log n)" else "Θ(n^$d log n)",
-        )
+        d < logBA - 1e-9 -> Triple(1, "d < log_b(a) — the leaves dominate.", "Θ(${poly(logBA)})")
+        d > logBA + 1e-9 -> Triple(3, "d > log_b(a) — the root work dominates.", "Θ(${poly(d.toDouble())})")
+        else -> {
+            val p = poly(d.toDouble())
+            Triple(
+                2,
+                "d = log_b(a) — work is even across levels.",
+                if (p == "1") "Θ(log n)" else "Θ($p log n)",
+            )
+        }
     }
 
     AnalysisToolCard(
