@@ -39,4 +39,17 @@ Opening any topic records it as last-opened. The content detail header gets a bo
 `CodeBlock` gains optional `variants: List<CodeVariant>` (language + code). When present, `CodeBlockCard` shows a language segmented toggle and renders the selected variant; otherwise the single Kotlin snippet as before. Populated for flagship topics (Array, Linear Regression) with Python/Java/JavaScript.
 
 ## Deferred
-Spaced-repetition scheduler (SM-2) — flashcards ship without scheduling; prerequisite graph UI; multi-language snippets for the remaining topics; bookmark/streak analytics.
+Multi-language snippets for the remaining topics; bookmark/streak analytics.
+
+## Spaced repetition + prerequisite graph (this session)
+
+- **SM-2 spaced repetition** — `SrsCard` + `sm2()` implement the standard SM-2 update (quality 0-5,
+  <3 lapses). Per-card state (`reps|ef|interval|due`) persists in the settings DataStore under one
+  `SRS` set key. `SettingsRepository.srs`/`reviewCard()`. New `ReviewScreen` builds the due-today
+  queue from every authored topic's takeaways (keyed `topicId#index`), flips to reveal, grades
+  Again/Good/Easy, reschedules + advances. Reached from a Home "Spaced Repetition" card
+  (`review` route). Distinct from the existing shuffle-all `FlashcardScreen`. Verified on-device.
+- **Prerequisite graph UI** — `PrerequisiteGraph`, a curated learning-order DAG over the core DSA
+  backbone (`prereqsOf` / `unlockedBy` reverse edges). `TopicDetailScreen` gains a "Learning Path"
+  section rendering tappable "Learn first" + "Unlocks" chips that navigate. Renders nothing for
+  topics outside the curated graph. Verified on-device (coin_change → Fibonacci-DP / 0/1-Knapsack).

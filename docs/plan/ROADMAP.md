@@ -21,7 +21,7 @@ Each phase gets planned in detail in its own session: `/clear`, load this file +
 | 4 | Algorithm Analysis Module | Done — all 17 Analysis tool ids built (11 distinct tools; see phase-4 doc) |
 | 5 | AI Mode | Mode switch + AI nav + full ML/DL/NLP/RL taxonomy done; 2 flagship topics (Linear Regression, Perceptron) with sims — remaining AI content deferred |
 | 6 | Interview Prep Module | Timed quiz mode + 2 quizzes (pattern/company-tagged, cross-linked) + 3 pattern guides done — remaining sets/behavioral deferred |
-| 7 | Engagement & Polish | Persisted dark mode + streaks + bookmarks/continue + flashcards + difficulty chips + multi-language code toggle done; spaced-repetition + prerequisite graph deferred |
+| 7 | Engagement & Polish | Persisted dark mode + streaks + bookmarks/continue + flashcards + difficulty chips + multi-language code toggle + SM-2 spaced repetition + prerequisite-graph UI done; multi-language snippets for remaining topics deferred |
 
 ## Phase Breakdown
 
