@@ -70,6 +70,8 @@ import com.algora.app.core.ui.theme.SpaceGrotesk
 import com.algora.app.feature.analysis.tools.AnalysisToolRegistry
 import com.algora.app.feature.interviewprep.behavioral.BehavioralRegistry
 import com.algora.app.feature.interviewprep.behavioral.BehavioralScreen
+import com.algora.app.feature.interviewprep.systemdesign.SystemDesignRegistry
+import com.algora.app.feature.interviewprep.systemdesign.SystemDesignScreen
 import com.algora.app.feature.interviewprep.quiz.QuizRegistry
 import com.algora.app.feature.interviewprep.quiz.QuizScreen
 import com.algora.app.feature.topics.content.TopicContentProvider
@@ -115,6 +117,16 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
     if (behavioral != null) {
         BehavioralScreen(
             bank = behavioral,
+            onBack = onBack,
+            onComplete = { scope.launch { repository.markCompleted(topicId) } },
+        )
+        return
+    }
+
+    val systemDesign = remember(topicId) { SystemDesignRegistry.get(topicId) }
+    if (systemDesign != null) {
+        SystemDesignScreen(
+            primer = systemDesign,
             onBack = onBack,
             onComplete = { scope.launch { repository.markCompleted(topicId) } },
         )
