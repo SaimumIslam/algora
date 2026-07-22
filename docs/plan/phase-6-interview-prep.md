@@ -1,6 +1,6 @@
 # Phase 6 — Interview Prep Module
 
-Status: In progress
+Status: DONE — all 11 Interview Prep topics have content
 Depends on: Phase 2 (links back to Algorithms topics)
 
 ## Goal
@@ -33,7 +33,13 @@ The `Patterns` category topics (Sliding Window, Two Pointer, Fast & Slow Pointer
 Quiz chrome reuses the mock's tokens — Surface radii, `SimColors` action buttons, accent tag chips, `TakeawayGreen` for correct answers, a detail-style back header + a timer pill.
 
 ## Deferred
-System Design Primer; a per-topic problem list separate from quizzes.
+A per-topic problem list separate from quizzes (nice-to-have; not blocking).
+
+## System Design Primer (this session — closes Phase 6)
+New `systemdesign/` package (models/content/registry/`SystemDesignScreen`) mirroring the behavioral
+bank: a "Drive the round" 5-step framework card + expandable building-block cards (10 concepts, each
+category-chipped with a "when to use it"). Resolved in `TopicDetailScreen`. All 11 Interview Prep
+topics now have content. Verified on-device.
 
 ## Remaining pattern guides (this session)
 `merge_intervals_pattern` (→ merge_sort, timed mock) and `top_k_pattern` (→ top_k_elements, heap,
