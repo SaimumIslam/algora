@@ -33,8 +33,12 @@ The `Patterns` category topics (Sliding Window, Two Pointer, Fast & Slow Pointer
 Quiz chrome reuses the mock's tokens — Surface radii, `SimColors` action buttons, accent tag chips, `TakeawayGreen` for correct answers, a detail-style back header + a timer pill.
 
 ## Deferred
-Full content for the remaining pattern topics (Merge Intervals, Top-K guides); System Design Primer;
-a per-topic problem list separate from quizzes.
+System Design Primer; a per-topic problem list separate from quizzes.
+
+## Remaining pattern guides (this session)
+`merge_intervals_pattern` (→ merge_sort, timed mock) and `top_k_pattern` (→ top_k_elements, heap,
+FAANG set) authored on the standard 7-section template and registered in `TopicContentProvider`.
+All five Patterns topics now have full content. Verified on-device.
 
 ## Remaining quizzes + behavioral (this session)
 

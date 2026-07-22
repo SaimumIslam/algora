@@ -20,7 +20,7 @@ Each phase gets planned in detail in its own session: `/clear`, load this file +
 | 3 | Interactive Simulation Library | Done — DS sims + ClassifierPlayground + recursion-tree (factorial/fibonacci/hanoi/n-queens) + DP grid (5 topics) + shared PlaybackTransport; slider-explorer subsumed |
 | 4 | Algorithm Analysis Module | Done — all 17 Analysis tool ids built (11 distinct tools; see phase-4 doc) |
 | 5 | AI Mode | Mode switch + AI nav + full ML/DL/NLP/RL taxonomy done; 2 flagship topics (Linear Regression, Perceptron) with sims — remaining AI content deferred |
-| 6 | Interview Prep Module | Timed quiz mode + 4 quizzes (FAANG/Startup/Finance company sets + mock) + 3 pattern guides + behavioral bank (STAR) done — remaining pattern guides + system-design deferred |
+| 6 | Interview Prep Module | Timed quiz mode + 4 quizzes (FAANG/Startup/Finance + mock) + all 5 pattern guides + behavioral bank (STAR) done — System Design Primer deferred |
 | 7 | Engagement & Polish | Persisted dark mode + streaks + bookmarks/continue + flashcards + difficulty chips + multi-language code toggle + SM-2 spaced repetition + prerequisite-graph UI done; multi-language snippets for remaining topics deferred |
 
 ## Phase Breakdown
