@@ -1,6 +1,6 @@
 # Phase 3 — Interactive Simulation Library
 
-Status: Data-structure sims + gate solver + ClassifierPlayground + PlaybackTransport + recursion-tree (factorial/fibonacci) + DP grid (fibonacci_dp/edit_distance/LCS/coin_change/knapsack_01) done — sub-phase C (capped hanoi/n-queens) stretch remaining; slider-explorer subsumed
+Status: DONE — data-structure sims + gate solver + ClassifierPlayground + PlaybackTransport + recursion-tree (factorial/fibonacci/hanoi/n-queens) + DP grid (fibonacci_dp/edit_distance/LCS/coin_change/knapsack_01); slider-explorer subsumed
 Depends on: Phase 2
 
 ## Goal
