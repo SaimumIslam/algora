@@ -172,6 +172,7 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
                         SimulationType.PerceptronVisualizer -> PerceptronSimulationSection()
                         SimulationType.ClassifierPlayground -> ClassifierPlaygroundSection(classifierConfigFor(topicId))
                         SimulationType.RecursionTreeVisualizer -> RecursionTreeSection(topicId)
+                        SimulationType.DpGridVisualizer -> DpGridSection(topicId)
                         SimulationType.NotYetAvailable -> SimulationComingSoonCard()
                     }
                 }

@@ -52,7 +52,7 @@ internal val editDistanceContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.DpGridVisualizer,
     applications = listOf(
         ApplicationCard("search", 0xFF10B981, "Spell Check & Autocorrect", "Suggestions rank candidate words by how few edits reach the typed word."),
         ApplicationCard("flask", 0xFF3B82F6, "DNA Alignment", "Scoring mutations between genetic sequences is a weighted edit distance."),

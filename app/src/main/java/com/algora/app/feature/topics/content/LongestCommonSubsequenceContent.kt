@@ -50,7 +50,7 @@ internal val longestCommonSubsequenceContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.DpGridVisualizer,
     applications = listOf(
         ApplicationCard("link", 0xFF10B981, "Diff Tools", "Line-based LCS is what git diff and file-compare tools use to align versions."),
         ApplicationCard("flask", 0xFF3B82F6, "Bioinformatics", "Aligning DNA/protein sequences to measure similarity builds on LCS-style DP."),

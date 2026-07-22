@@ -50,7 +50,7 @@ internal val fibonacciDpContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.DpGridVisualizer,
     applications = listOf(
         ApplicationCard("book", 0xFF10B981, "Learning DP", "It's the canonical first lesson in both memoization and tabulation."),
         ApplicationCard("chip", 0xFF3B82F6, "State Compression", "Reducing an O(n) table to O(1) variables is a reusable DP optimization pattern."),

@@ -69,5 +69,6 @@ sealed interface SimulationType {
     data object PerceptronVisualizer : SimulationType
     data object ClassifierPlayground : SimulationType
     data object RecursionTreeVisualizer : SimulationType
+    data object DpGridVisualizer : SimulationType
     data object NotYetAvailable : SimulationType
 }
