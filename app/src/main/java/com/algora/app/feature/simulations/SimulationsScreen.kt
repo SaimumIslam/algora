@@ -47,6 +47,7 @@ private fun simLabel(type: SimulationType): String = when (type) {
     SimulationType.RegressionExplorer -> "Regression explorer"
     SimulationType.PerceptronVisualizer -> "Perceptron playground"
     SimulationType.ClassifierPlayground -> "Classifier playground"
+    SimulationType.RecursionTreeVisualizer -> "Recursion tree · call stack"
     SimulationType.NotYetAvailable -> "Interactive lab"
 }
 

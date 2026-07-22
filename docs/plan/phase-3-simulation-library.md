@@ -52,6 +52,9 @@ concrete DP problem chosen to visualize), and the generic slider-driven paramete
 of these have a current DSA topic to attach to; build them once their target topics exist or their
 design is worked out from scratch, since the mock provides no reference.
 
+> **Stale note.** The "no current topic to attach to" claim is no longer true — see the build plan
+> at the bottom of this file. Recursion and DP topics already exist on `NotYetAvailable`.
+
 ## Gate solver — status correction (this note supersedes the deferral above)
 
 The **AND/OR/XOR gate solver is built and shipped.** Phase 5 implemented it as
@@ -107,3 +110,69 @@ convention and the `data object` equality the `when` relies on.)
 - `./gradlew assembleDebug`.
 - Emulator: perceptron screen pixel-unchanged (regression check); logistic_regression + svm render
   their blobs with a tunable decision boundary and live accuracy/margin readout.
+
+---
+
+## Build plan — remaining sims (recursion tree + DP grid)
+
+The two remaining sim widgets **do** have target topics now (the deferral note above is stale, same
+pattern as the gate solver). Confirmed ids on `NotYetAvailable`:
+
+- **Recursion tree / call-stack:** `factorial`, `fibonacci_recursive`, `tower_of_hanoi`, `n_queens`
+- **DP tabulation grid:** `fibonacci_dp`, `coin_change`, `knapsack_01`, `edit_distance`,
+  `longest_common_subsequence`, `rod_cutting`, `matrix_chain_multiplication`,
+  `longest_increasing_subsequence`
+
+Two reusable widgets light up ~12 dead topics. Both follow the conventions already in the codebase:
+**precomputed-snapshot playback** (like `GraphSimulationSection`'s BFS/DFS sequence) and
+**config-resolved-by-topicId** (like `ClassifierPlayground` / `AnalysisToolRegistry`). Reuse the
+`Surface`(18dp radius / `outline` border) chrome and `SimColors`.
+
+### Step 0 — Shared playback transport (Phase 3 scope item, still unbuilt)
+- Add `PlaybackTransport` to `SimComponents.kt`: reset ⏮ · step-back · play/pause · step-forward ⏭ +
+  speed slider. Auto-advance driven by a `LaunchedEffect(playing, speed)` tick.
+- Model: a sim is a `List<Step>` + a current index. `PlaybackTransport` owns index/playing state and
+  calls back on change; the widget renders `steps[index]`. Both new widgets (and any future stepped
+  sim) share it.
+
+### Sub-phase A — Recursion tree / call-stack (`RecursionTreeVisualizer`)
+- New `RecursionTreeSection.kt`. Config = `RecursionConfig(nRange, buildSteps: (n) -> List<RecStep>)`.
+  A `RecStep` snapshots: active call, the call stack (list), and each tree node's state
+  (pending / active / returned + return value).
+- Canvas: tree laid out by depth × sibling order (precomputed, not force-directed — mirror the graph
+  sim's fixed-layout choice); a call-stack column beside it; current return value.
+- Ship **`factorial`** (linear chain) and **`fibonacci_recursive`** (binary tree, cap n ≤ 6 so the
+  tree stays legible) first — clean, small trees.
+- `tower_of_hanoi` / `n_queens` trees explode; defer to sub-phase C with a hard input cap (e.g. 3
+  disks, 4×4 board) or attach later.
+
+### Sub-phase B — DP tabulation grid (`DpGridVisualizer`)
+- New `DpGridSection.kt`. Config = `DpConfig(rows, cols, axisLabels, buildFill: -> List<CellFill>,
+  traceback: List<Cell>, cellLabel)`. `CellFill` = (r, c, value); fill order is the DP recurrence
+  order.
+- Canvas/grid: animate cell-by-cell fill via `PlaybackTransport`; after the last fill step, highlight
+  the traceback path.
+- Ship **`fibonacci_dp`** (1-D row) and **`edit_distance`** (classic 2-D with traceback) first; then
+  `longest_common_subsequence`, `coin_change`, `knapsack_01` via added configs. 1-D problems render
+  as a single row, 2-D as a matrix — same widget.
+
+### Sub-phase C (stretch) — capped recursion trees
+- `tower_of_hanoi` (3 disks), `n_queens` (4×4) with hard input caps so the backtracking tree stays
+  renderable. Reuse sub-phase A's widget + transport.
+
+### Wiring (each sub-phase)
+- Add the `SimulationType` data object(s) — exhaustive `when` in `TopicDetailScreen` is
+  compiler-enforced. Add `SimulationsScreen` labels.
+- `recursionConfigFor(topicId)` / `dpConfigFor(topicId)` registries.
+- Flip each shipped topic's `simulation =` off `NotYetAvailable`.
+
+### Generic slider-explorer — close as subsumed
+The third deferred item is **already covered** by `RegressionExplorer` and `ClassifierPlayground`
+— both are slider-driven parameter explorers. No distinct target topic needs a separate generic
+explorer. Recommend marking it done-by-reuse unless a non-classifier slider target appears; don't
+build a fourth near-duplicate.
+
+### Verify
+- `./gradlew assembleDebug`.
+- Emulator: factorial recursion plays through with working transport (reset / step / play / speed);
+  edit_distance grid fills cell-by-cell then highlights the traceback.

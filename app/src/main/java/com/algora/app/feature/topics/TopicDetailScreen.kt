@@ -171,6 +171,7 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
                         SimulationType.RegressionExplorer -> RegressionSimulationSection()
                         SimulationType.PerceptronVisualizer -> PerceptronSimulationSection()
                         SimulationType.ClassifierPlayground -> ClassifierPlaygroundSection(classifierConfigFor(topicId))
+                        SimulationType.RecursionTreeVisualizer -> RecursionTreeSection(topicId)
                         SimulationType.NotYetAvailable -> SimulationComingSoonCard()
                     }
                 }

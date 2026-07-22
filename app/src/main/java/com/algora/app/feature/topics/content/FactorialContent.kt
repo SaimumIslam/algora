@@ -49,7 +49,7 @@ internal val factorialContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.RecursionTreeVisualizer,
     applications = listOf(
         ApplicationCard("chart", 0xFF10B981, "Combinatorics", "Permutation and combination counts (nPr, nCr) are built directly from factorials."),
         ApplicationCard("book", 0xFF3B82F6, "Learning Recursion", "It's the canonical base-case + recursive-case example every course starts with."),

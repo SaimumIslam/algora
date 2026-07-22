@@ -51,7 +51,7 @@ internal val fibonacciRecursiveContent = TopicContent(
             """.trimIndent(),
         ),
     ),
-    simulation = SimulationType.NotYetAvailable,
+    simulation = SimulationType.RecursionTreeVisualizer,
     applications = listOf(
         ApplicationCard("book", 0xFF10B981, "Why Memoization Matters", "It's the standard example showing how caching turns exponential recursion into linear DP."),
         ApplicationCard("flask", 0xFF3B82F6, "Nature & Math", "Fibonacci numbers appear in phyllotaxis, the golden ratio, and Euclid's GCD analysis."),
