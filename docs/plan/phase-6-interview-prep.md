@@ -33,4 +33,16 @@ The `Patterns` category topics (Sliding Window, Two Pointer, Fast & Slow Pointer
 Quiz chrome reuses the mock's tokens — Surface radii, `SimColors` action buttons, accent tag chips, `TakeawayGreen` for correct answers, a detail-style back header + a timer pill.
 
 ## Deferred
-Full content for the remaining pattern topics; the other company/mock sets as quizzes; behavioral/system-design prose; a per-topic problem list separate from quizzes.
+Full content for the remaining pattern topics (Merge Intervals, Top-K guides); System Design Primer;
+a per-topic problem list separate from quizzes.
+
+## Remaining quizzes + behavioral (this session)
+
+- **Company quizzes** — `startupSet` (Stripe/Airbnb/DoorDash/Notion/Databricks) and
+  `financeTradingSet` (Two Sigma/Jane Street/Jump/Citadel/HRT), five company-tagged questions each,
+  cross-linked to Algorithms topics, added to `QuizRegistry`. Reuse the existing `QuizScreen`.
+- **Behavioral bank** — `behavioral/` package: `BehavioralModels` (prompt + category + assesses +
+  starTip), `BehavioralContent` (8 prompts across Conflict/Failure/Leadership/…), `BehavioralRegistry`,
+  and `BehavioralScreen` — a STAR-framework primer card plus expandable question cards showing "what
+  they're assessing" and "how to frame it". Resolved in `TopicDetailScreen` (new branch after the
+  quiz branch); "Mark as reviewed" marks the topic complete. Verified on-device.
