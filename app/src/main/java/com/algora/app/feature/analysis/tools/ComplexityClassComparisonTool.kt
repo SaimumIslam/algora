@@ -9,11 +9,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,21 +29,28 @@ import com.algora.app.feature.analysis.tools.common.complexityCurves
 import kotlin.math.roundToInt
 
 @Composable
-fun GrowthCurveChartTool() {
-    var maxN by remember { mutableStateOf(50f) }
-    val maxNInt = maxN.toInt().coerceAtLeast(1)
+fun ComplexityClassComparisonTool() {
+    var n by remember { mutableStateOf(20f) }
+    val nInt = n.toInt().coerceAtLeast(1)
+    // Which classes are currently plotted — toggle any on or off.
+    val shown = remember {
+        mutableStateMapOf<String, Boolean>().apply {
+            complexityCurves.forEach { put(it.label, true) }
+        }
+    }
+    val visible = complexityCurves.filter { shown[it.label] == true }
 
     AnalysisToolCard(
-        intro = "How operation count grows with input size n, across the complexity classes you'll " +
-            "see throughout this app. Y-axis is log-scaled so all five curves stay visible at once.",
+        intro = "Toggle complexity classes on and off to compare them directly. Each row shows the " +
+            "operation count at the current n; check a class to overlay its curve on the chart.",
     ) {
         Column(modifier = Modifier.padding(top = 14.dp, bottom = 6.dp)) {
             Text(
-                "Max n = $maxNInt",
+                "n = $nInt",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.SemiBold,
             )
-            Slider(value = maxN, onValueChange = { maxN = it }, valueRange = 10f..100f, steps = 8)
+            Slider(value = n, onValueChange = { n = it }, valueRange = 5f..100f, steps = 18)
         }
 
         Box(
@@ -50,16 +59,17 @@ fun GrowthCurveChartTool() {
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(14.dp))
                 .padding(6.dp),
         ) {
-            MiniLineChart(curves = complexityCurves, maxN = maxNInt, logScale = true)
+            MiniLineChart(curves = visible, maxN = nInt, logScale = true)
         }
 
-        Column(modifier = Modifier.padding(top = 14.dp)) {
+        Column(modifier = Modifier.padding(top = 10.dp)) {
             complexityCurves.forEach { curve ->
-                val value = curve.fn(maxNInt.toDouble())
+                val checked = shown[curve.label] == true
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
+                    Checkbox(checked = checked, onCheckedChange = { shown[curve.label] = it })
                     Box(modifier = Modifier.size(10.dp).background(curve.color, CircleShape))
                     Text(
                         curve.label,
@@ -67,9 +77,10 @@ fun GrowthCurveChartTool() {
                         modifier = Modifier.padding(start = 8.dp).weight(1f),
                     )
                     Text(
-                        "≈ ${value.roundToInt()} ops",
+                        "${curve.fn(nInt.toDouble()).roundToInt()} ops",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontWeight = FontWeight.SemiBold,
                     )
                 }
             }

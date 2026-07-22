@@ -18,7 +18,7 @@ Each phase gets planned in detail in its own session: `/clear`, load this file +
 | 1 | Vertical Slice | Done |
 | 2 | Topic Browser & Content Scale-out | Browser shell done — bulk content authoring continues |
 | 3 | Interactive Simulation Library | Data-structure sims done — recursion/DP/gate/slider-explorer deferred |
-| 4 | Algorithm Analysis Module | 2 flagship tools done (Operation Counter, Growth Curve Chart) — 6 more deferred |
+| 4 | Algorithm Analysis Module | Done — all 17 Analysis tool ids built (11 distinct tools; see phase-4 doc) |
 | 5 | AI Mode | Mode switch + AI nav + full ML/DL/NLP/RL taxonomy done; 2 flagship topics (Linear Regression, Perceptron) with sims — remaining AI content deferred |
 | 6 | Interview Prep Module | Timed quiz mode + 2 quizzes (pattern/company-tagged, cross-linked) + 3 pattern guides done — remaining sets/behavioral deferred |
 | 7 | Engagement & Polish | Persisted dark mode + streaks + bookmarks/continue + flashcards + difficulty chips + multi-language code toggle done; spaced-repetition + prerequisite graph deferred |

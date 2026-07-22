@@ -9,7 +9,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,23 +22,50 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.algora.app.core.ui.theme.SimColors
 import com.algora.app.feature.analysis.tools.common.AnalysisToolCard
 import com.algora.app.feature.analysis.tools.common.MiniLineChart
 import com.algora.app.feature.analysis.tools.common.complexityCurves
 import kotlin.math.roundToInt
 
 @Composable
-fun GrowthCurveChartTool() {
+fun GrowthClassComparisonTool() {
     var maxN by remember { mutableStateOf(50f) }
+    var logScale by remember { mutableStateOf(true) }
     val maxNInt = maxN.toInt().coerceAtLeast(1)
 
     AnalysisToolCard(
-        intro = "How operation count grows with input size n, across the complexity classes you'll " +
-            "see throughout this app. Y-axis is log-scaled so all five curves stay visible at once.",
+        intro = "The same five growth classes on one chart. Toggle the scale: log spreads all curves " +
+            "apart so their shapes are readable; linear shows their true relative magnitude, where " +
+            "O(n²) dwarfs the rest.",
     ) {
-        Column(modifier = Modifier.padding(top = 14.dp, bottom = 6.dp)) {
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 14.dp)) {
+            val logSelected = logScale
+            if (logSelected) {
+                Button(
+                    onClick = { logScale = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = SimColors.Blue, contentColor = Color.White),
+                    modifier = Modifier.weight(1f),
+                ) { Text("Log scale") }
+            } else {
+                OutlinedButton(onClick = { logScale = true }, modifier = Modifier.weight(1f)) { Text("Log scale") }
+            }
+            Box(modifier = Modifier.padding(start = 8.dp))
+            if (!logSelected) {
+                Button(
+                    onClick = { logScale = false },
+                    colors = ButtonDefaults.buttonColors(containerColor = SimColors.Blue, contentColor = Color.White),
+                    modifier = Modifier.weight(1f),
+                ) { Text("Linear scale") }
+            } else {
+                OutlinedButton(onClick = { logScale = false }, modifier = Modifier.weight(1f)) { Text("Linear scale") }
+            }
+        }
+
+        Column(modifier = Modifier.padding(top = 16.dp, bottom = 6.dp)) {
             Text(
                 "Max n = $maxNInt",
                 style = MaterialTheme.typography.bodyMedium,
@@ -50,12 +80,11 @@ fun GrowthCurveChartTool() {
                 .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f), RoundedCornerShape(14.dp))
                 .padding(6.dp),
         ) {
-            MiniLineChart(curves = complexityCurves, maxN = maxNInt, logScale = true)
+            MiniLineChart(curves = complexityCurves, maxN = maxNInt, logScale = logScale)
         }
 
         Column(modifier = Modifier.padding(top = 14.dp)) {
             complexityCurves.forEach { curve ->
-                val value = curve.fn(maxNInt.toDouble())
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
@@ -67,7 +96,7 @@ fun GrowthCurveChartTool() {
                         modifier = Modifier.padding(start = 8.dp).weight(1f),
                     )
                     Text(
-                        "≈ ${value.roundToInt()} ops",
+                        "≈ ${curve.fn(maxNInt.toDouble()).roundToInt()} ops",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

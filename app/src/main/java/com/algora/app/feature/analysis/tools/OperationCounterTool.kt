@@ -1,19 +1,16 @@
 package com.algora.app.feature.analysis.tools
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Slider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.algora.app.core.ui.theme.SimColors
 import com.algora.app.core.ui.theme.SpaceGrotesk
+import com.algora.app.feature.analysis.tools.common.AnalysisToolCard
+import com.algora.app.feature.analysis.tools.common.InstrumentedAlgos
 
 private enum class SearchAlgo(val label: String, val complexityLabel: String) {
     LINEAR("Linear Search", "≈ O(n) comparisons, worst-case"),
@@ -37,34 +36,6 @@ private enum class SearchAlgo(val label: String, val complexityLabel: String) {
 
 private data class RunResult(val n: Int, val comparisons: Int)
 
-// Real instrumented code — the comparison count reflects what this Kotlin loop actually executed,
-// not a formula estimate. Both search a value that isn't present, so every run demonstrates the
-// true worst-case bound.
-private fun linearSearchCounted(arr: IntArray, target: Int): Int {
-    var comparisons = 0
-    for (value in arr) {
-        comparisons++
-        if (value == target) break
-    }
-    return comparisons
-}
-
-private fun binarySearchCounted(arr: IntArray, target: Int): Int {
-    var comparisons = 0
-    var lo = 0
-    var hi = arr.size - 1
-    while (lo <= hi) {
-        val mid = lo + (hi - lo) / 2
-        comparisons++
-        when {
-            arr[mid] == target -> break
-            arr[mid] < target -> lo = mid + 1
-            else -> hi = mid - 1
-        }
-    }
-    return comparisons
-}
-
 @Composable
 fun OperationCounterTool() {
     var algo by remember { mutableStateOf(SearchAlgo.LINEAR) }
@@ -72,106 +43,91 @@ fun OperationCounterTool() {
     var lastComparisons by remember { mutableStateOf<Int?>(null) }
     val history = remember { mutableStateListOf<RunResult>() }
 
-    Surface(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(18.dp),
-        color = MaterialTheme.colorScheme.surface,
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    AnalysisToolCard(
+        intro = "Runs real Kotlin search code on a sorted array and counts every comparison it " +
+            "makes — not an estimate.",
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(
-                "Runs real Kotlin search code on a sorted array and counts every comparison it makes — not an estimate.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 14.dp)) {
-                SearchAlgo.entries.forEachIndexed { index, option ->
-                    if (index > 0) Box(modifier = Modifier.padding(start = 8.dp))
-                    val selected = algo == option
-                    if (selected) {
-                        Button(
-                            onClick = { algo = option },
-                            colors = ButtonDefaults.buttonColors(containerColor = SimColors.Blue, contentColor = Color.White),
-                            modifier = Modifier.weight(1f),
-                        ) { Text(option.label) }
-                    } else {
-                        OutlinedButton(onClick = { algo = option }, modifier = Modifier.weight(1f)) { Text(option.label) }
-                    }
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 14.dp)) {
+            SearchAlgo.entries.forEachIndexed { index, option ->
+                if (index > 0) Box(modifier = Modifier.padding(start = 8.dp))
+                val selected = algo == option
+                if (selected) {
+                    Button(
+                        onClick = { algo = option },
+                        colors = ButtonDefaults.buttonColors(containerColor = SimColors.Blue, contentColor = Color.White),
+                        modifier = Modifier.weight(1f),
+                    ) { Text(option.label) }
+                } else {
+                    OutlinedButton(onClick = { algo = option }, modifier = Modifier.weight(1f)) { Text(option.label) }
                 }
             }
+        }
 
-            Column(modifier = Modifier.padding(top = 16.dp)) {
+        Column(modifier = Modifier.padding(top = 16.dp)) {
+            Text(
+                "Array size · n = ${n.toInt()}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            Slider(value = n, onValueChange = { n = it }, valueRange = 4f..64f, steps = 59)
+        }
+
+        Button(
+            onClick = {
+                val size = n.toInt()
+                val sortedArray = IntArray(size) { it * 2 }
+                val missingTarget = -1
+                val comparisons = when (algo) {
+                    SearchAlgo.LINEAR -> InstrumentedAlgos.linearSearch(sortedArray, missingTarget)
+                    SearchAlgo.BINARY -> InstrumentedAlgos.binarySearch(sortedArray, missingTarget)
+                }
+                lastComparisons = comparisons
+                history.add(0, RunResult(size, comparisons))
+                while (history.size > 6) history.removeAt(history.lastIndex)
+            },
+            colors = ButtonDefaults.buttonColors(containerColor = SimColors.Green, contentColor = Color.White),
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+        ) { Text("▸ Run") }
+
+        lastComparisons?.let { comparisons ->
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Text(
-                    "Array size · n = ${n.toInt()}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontWeight = FontWeight.SemiBold,
+                    text = comparisons.toString(),
+                    fontFamily = SpaceGrotesk,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 40.sp,
+                    color = MaterialTheme.colorScheme.primary,
                 )
-                Slider(
-                    value = n,
-                    onValueChange = { n = it },
-                    valueRange = 4f..64f,
-                    steps = 59,
+                Text(
+                    "comparisons",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    algo.complexityLabel,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
             }
+        }
 
-            Button(
-                onClick = {
-                    val size = n.toInt()
-                    val sortedArray = IntArray(size) { it * 2 }
-                    val missingTarget = -1
-                    val comparisons = when (algo) {
-                        SearchAlgo.LINEAR -> linearSearchCounted(sortedArray, missingTarget)
-                        SearchAlgo.BINARY -> binarySearchCounted(sortedArray, missingTarget)
-                    }
-                    lastComparisons = comparisons
-                    history.add(0, RunResult(size, comparisons))
-                    while (history.size > 6) history.removeAt(history.lastIndex)
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = SimColors.Green, contentColor = Color.White),
-                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-            ) { Text("▸ Run") }
-
-            lastComparisons?.let { comparisons ->
-                Column(
-                    modifier = Modifier.fillMaxWidth().padding(top = 18.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+        if (history.isNotEmpty()) {
+            Text(
+                "Recent runs",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
+            )
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                history.forEach { run ->
                     Text(
-                        text = comparisons.toString(),
-                        fontFamily = SpaceGrotesk,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 40.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        "comparisons",
+                        "n = ${run.n} → ${run.comparisons} comparisons",
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                    Text(
-                        algo.complexityLabel,
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp),
-                    )
-                }
-            }
-
-            if (history.isNotEmpty()) {
-                Text(
-                    "Recent runs",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 20.dp, bottom = 8.dp),
-                )
-                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    history.forEach { run ->
-                        Text(
-                            "n = ${run.n} → ${run.comparisons} comparisons",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
                 }
             }
         }
