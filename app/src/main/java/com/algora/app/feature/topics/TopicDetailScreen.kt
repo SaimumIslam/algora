@@ -68,6 +68,8 @@ import com.algora.app.core.ui.components.resolveIcon
 import com.algora.app.core.ui.theme.AlgoraCodeStyle
 import com.algora.app.core.ui.theme.SpaceGrotesk
 import com.algora.app.feature.analysis.tools.AnalysisToolRegistry
+import com.algora.app.feature.interviewprep.behavioral.BehavioralRegistry
+import com.algora.app.feature.interviewprep.behavioral.BehavioralScreen
 import com.algora.app.feature.interviewprep.quiz.QuizRegistry
 import com.algora.app.feature.interviewprep.quiz.QuizScreen
 import com.algora.app.feature.topics.content.TopicContentProvider
@@ -105,6 +107,16 @@ fun TopicDetailScreen(topicId: String, onBack: () -> Unit, onTopicClick: (String
             onBack = onBack,
             onTopicClick = onTopicClick,
             onFinish = { scope.launch { repository.markCompleted(topicId) } },
+        )
+        return
+    }
+
+    val behavioral = remember(topicId) { BehavioralRegistry.get(topicId) }
+    if (behavioral != null) {
+        BehavioralScreen(
+            bank = behavioral,
+            onBack = onBack,
+            onComplete = { scope.launch { repository.markCompleted(topicId) } },
         )
         return
     }

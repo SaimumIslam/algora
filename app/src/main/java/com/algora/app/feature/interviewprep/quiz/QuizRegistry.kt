@@ -6,6 +6,8 @@ object QuizRegistry {
     private val quizzes: Map<String, Quiz> = mapOf(
         "timed_mock_interview" to timedMockInterview,
         "faang_set" to faangSet,
+        "startup_set" to startupSet,
+        "finance_trading_set" to financeTradingSet,
     )
 
     fun get(topicId: String): Quiz? = quizzes[topicId]
