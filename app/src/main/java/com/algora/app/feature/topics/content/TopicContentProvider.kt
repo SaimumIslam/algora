@@ -1,0 +1,109 @@
+package com.algora.app.feature.topics.content
+
+import com.algora.app.core.data.model.SimulationType
+import com.algora.app.core.data.model.TopicContent
+
+object TopicContentProvider {
+    private val byId: Map<String, TopicContent> = mapOf(
+        "array" to arrayContent,
+        "string" to stringContent,
+        "singly_linked_list" to singlyLinkedListContent,
+        "doubly_linked_list" to doublyLinkedListContent,
+        "stack" to stackContent,
+        "queue" to queueContent,
+        "hash_table" to hashTableContent,
+        "tree" to treeContent,
+        "binary_search_tree" to binarySearchTreeContent,
+        "heap" to heapContent,
+        "trie" to trieContent,
+        "graph" to graphContent,
+        "segment_tree" to segmentTreeContent,
+        "fenwick_tree" to fenwickTreeContent,
+        "disjoint_set" to disjointSetContent,
+        "avl_red_black_tree" to avlRedBlackTreeContent,
+        "b_tree" to bTreeContent,
+        "suffix_tree" to suffixTreeContent,
+        "skip_list" to skipListContent,
+        "bloom_filter" to bloomFilterContent,
+        "lru_cache" to lruCacheContent,
+        "kd_tree" to kdTreeContent,
+        "graph_variants" to graphVariantsContent,
+        "list_adt" to listAdtContent,
+        "set_adt" to setAdtContent,
+        "map_adt" to mapAdtContent,
+        "priority_queue_adt" to priorityQueueAdtContent,
+        "bubble_sort" to bubbleSortContent,
+        "selection_sort" to selectionSortContent,
+        "insertion_sort" to insertionSortContent,
+        "merge_sort" to mergeSortContent,
+        "quick_sort" to quickSortContent,
+        "heap_sort" to heapSortContent,
+        "counting_sort" to countingSortContent,
+        "radix_sort" to radixSortContent,
+        "linear_search" to linearSearchContent,
+        "binary_search" to binarySearchContent,
+        "jump_search" to jumpSearchContent,
+        "interpolation_search" to interpolationSearchContent,
+        "exponential_search" to exponentialSearchContent,
+        "bfs" to bfsContent,
+        "dfs" to dfsContent,
+        "dijkstras_algorithm" to dijkstrasAlgorithmContent,
+        "kruskals_mst" to kruskalsMstContent,
+        "prims_mst" to primsMstContent,
+        "fractional_knapsack" to fractionalKnapsackContent,
+        "huffman_coding" to huffmanCodingContent,
+        "job_sequencing" to jobSequencingContent,
+        "factorial" to factorialContent,
+        "fibonacci_recursive" to fibonacciRecursiveContent,
+        "n_queens" to nQueensContent,
+        "sudoku_solver" to sudokuSolverContent,
+        "subset_sum" to subsetSumContent,
+        "permutation_generation" to permutationGenerationContent,
+        "closest_pair_of_points" to closestPairOfPointsContent,
+        "median_of_medians" to medianOfMediansContent,
+        "tower_of_hanoi" to towerOfHanoiContent,
+        "fibonacci_dp" to fibonacciDpContent,
+        "longest_common_subsequence" to longestCommonSubsequenceContent,
+        "knapsack_01" to knapsack01Content,
+        "edit_distance" to editDistanceContent,
+        "matrix_chain_multiplication" to matrixChainMultiplicationContent,
+        "longest_increasing_subsequence" to longestIncreasingSubsequenceContent,
+        "coin_change" to coinChangeContent,
+        "rod_cutting" to rodCuttingContent,
+        "bellman_ford" to bellmanFordContent,
+        "floyd_warshall" to floydWarshallContent,
+        "tarjans_algorithm" to tarjansAlgorithmContent,
+        "kosarajus_algorithm" to kosarajusAlgorithmContent,
+        "quickselect" to quickselectContent,
+        "karatsubas_algorithm" to karatsubasAlgorithmContent,
+        "strassens_algorithm" to strassensAlgorithmContent,
+        "a_star_search" to aStarSearchContent,
+        "d_star_algorithm" to dStarAlgorithmContent,
+        "top_k_elements" to topKElementsContent,
+        "sliding_window" to slidingWindowContent,
+        "two_pointer" to twoPointerContent,
+        "prefix_sum" to prefixSumContent,
+        "kadanes_algorithm" to kadanesAlgorithmContent,
+        "reservoir_sampling" to reservoirSamplingContent,
+        "monte_carlo_method" to monteCarloMethodContent,
+        "mos_algorithm" to mosAlgorithmContent,
+        "difference_array" to differenceArrayContent,
+        "linear_regression" to linearRegressionContent,
+        "perceptron" to perceptronContent,
+        "sliding_window_pattern" to slidingWindowPatternContent,
+        "two_pointer_pattern" to twoPointerPatternContent,
+        "fast_slow_pointers" to fastSlowPointersContent,
+    )
+
+    fun get(topicId: String): TopicContent? = byId[topicId]
+
+    // All authored topics — used by the flashcard review to harvest Key Takeaways (Phase 7).
+    val all: Map<String, TopicContent> get() = byId
+
+    // topicId -> SimulationType for every topic that ships a runnable lab (excludes NotYetAvailable).
+    // Backs the Simulations tab's catalog. Preserves byId insertion order (DSA, then AI, then patterns).
+    val runnableSimulations: List<Pair<String, SimulationType>>
+        get() = byId.entries
+            .filter { it.value.simulation != SimulationType.NotYetAvailable }
+            .map { it.key to it.value.simulation }
+}
